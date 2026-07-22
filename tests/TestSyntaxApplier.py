@@ -11,6 +11,7 @@ import unittest
 from typing import Optional, TYPE_CHECKING
 
 from AutoSyntaxByProject.SyntaxApplier import SyntaxApplier
+from AutoSyntaxByProject.SyntaxPathNormalizer import SyntaxPathNormalizer
 
 if TYPE_CHECKING:
 	import sublime
@@ -19,8 +20,9 @@ if TYPE_CHECKING:
 # т.к. sublime недоступен вне Sublime Text.
 _SettingsBase = sublime.Settings if TYPE_CHECKING else object
 _ViewBase = sublime.View if TYPE_CHECKING else object
+_NormalizerBase = SyntaxPathNormalizer if TYPE_CHECKING else object
 
-class _StubNormalizer:
+class _StubNormalizer(_NormalizerBase):
 	"""
 	Стаб `SyntaxPathNormalizer`: возвращает преднастроенное значение через
 	`mapping`. Позволяет тестам точно управлять результатом нормализации и
@@ -66,11 +68,13 @@ class _SpyView(_ViewBase):
 	def settings(self):
 		return self._settings
 
-	def set_syntax_file(self, syntax_path):
+	def set_syntax_file(self, syntax_path) -> bool:
 		if self._raise_on_set:
 			raise RuntimeError("ошибка set_syntax_file")
 
 		self.set_syntax_file_calls.append(syntax_path)
+
+		return True
 
 # Правильный путь к синтаксису.
 _VALID_PATH = "Packages/HTML/HTML.sublime-syntax"

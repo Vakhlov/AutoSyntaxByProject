@@ -1,6 +1,8 @@
 import sys
 import types
 
+from typing import Any
+
 class _Settings:
 	"""
 	«Пустые» настройки: get() всегда возвращает default.
@@ -39,13 +41,13 @@ def install():
 	Регистрирует заглушку в sys.modules. `setdefault` — чтобы не перезаписывать
 	настоящий sublime, если тесты вдруг запускаются изнутри Sublime Text.
 	"""
-	stub = types.ModuleType("sublime")
+	stub: Any = types.ModuleType("sublime")
 	stub.load_settings = lambda name: _Settings()
 	stub.Settings = Settings
 	stub.View = View
 	stub.Window = Window
 	sys.modules.setdefault("sublime", stub)
 
-	plugin = types.ModuleType("sublime_plugin")
+	plugin: Any = types.ModuleType("sublime_plugin")
 	plugin.EventListener = EventListener
 	sys.modules.setdefault("sublime_plugin", plugin)

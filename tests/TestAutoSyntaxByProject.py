@@ -65,7 +65,7 @@ class _FakeSyntaxApplier(SyntaxApplier):
 		self.calls.append(syntax_path)
 		return self._return_value
 
-class _FakeView:
+class _FakeView(_ViewBase):
 	"""
 	Подделка sublime.View: в тестируемом коде используются методы
 	file_name, id и window из sublime.View.
@@ -90,7 +90,7 @@ class _FakeView:
 	def window(self) -> Optional[sublime.Window]:
 		return self._window
 
-class _FakeWindow:
+class _FakeWindow(_WindowBase):
 	"""
 	Подделка sublime.Window: в тестируемом коде используются методы
 	`id`, `project_data` и `project_file_name` из `sublime.View.window()`.

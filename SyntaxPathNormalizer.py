@@ -15,7 +15,7 @@ class SyntaxPathNormalizer:
 
 		logger.debug("SyntaxPathNormalizer инициализирован")
 
-	def normalize(self, syntax_path: str) -> Optional[str]:
+	def normalize(self, syntax_path: Optional[str]) -> Optional[str]:
 		"""
 		Нормализует путь к синтаксису для сравнения.
 		Убирает `Packages/` и `.sublime-syntax` из пути.

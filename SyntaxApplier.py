@@ -1,5 +1,7 @@
 import sublime
 
+from typing import Optional
+
 from .constants import PACKAGES_PREFIX, SYNTAX_EXTENSION
 from .logger import logger
 from .SyntaxPathNormalizer import SyntaxPathNormalizer
@@ -20,7 +22,7 @@ class SyntaxApplier:
 
 		self._path_normalizer = path_normalizer
 
-	def apply_syntax(self, view: sublime.View, syntax_path: str) -> bool:
+	def apply_syntax(self, view: sublime.View, syntax_path: Optional[str]) -> bool:
 		"""
 		Применяет синтаксис к `view`.
 
@@ -34,7 +36,7 @@ class SyntaxApplier:
 		logger.debug(f"попытка применить синтаксис: {syntax_path}")
 
 		# 1. Проверяем валидность пути к синтаксису.
-		if not self._is_valid_syntax_path(syntax_path):
+		if not syntax_path or self._is_valid_syntax_path(syntax_path):
 			logger.warning(f"неправильный путь к синтаксису: {syntax_path}")
 			return False
 
@@ -63,7 +65,7 @@ class SyntaxApplier:
 			logger.error(f"ошибка при установке синтаксиса {syntax_path}: {e}")
 			return False
 
-	def _is_valid_syntax_path(self, syntax_path: str) -> bool:
+	def _is_valid_syntax_path(self, syntax_path: Optional[str]) -> bool:
 		"""
 		Проверяет, что путь к синтаксису корректен.
 

@@ -1,4 +1,5 @@
 import re
+
 from typing import Dict, List, Optional
 
 from .logger import logger
@@ -15,7 +16,7 @@ class SyntaxConfigParser:
 	# Регулярное выражения для проверки расширения файла.
 	EXTENSION_PATTERN = re.compile(r'\*\.([a-zA-Z0-9]+)')
 
-	def parse_syntax_map(self, project_data: Dict) -> Optional[Dict[str, str]]:
+	def parse_syntax_map(self, project_data: Optional[Dict]) -> Optional[Dict[str, str]]:
 		"""
 		Извлекает маппинг расширений на синтаксисы из настроек проекта.
 

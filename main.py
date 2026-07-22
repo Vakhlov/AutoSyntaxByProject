@@ -23,7 +23,7 @@ class AutoSyntaxByProject(sublime_plugin.EventListener):
 		self._syntax_applier = SyntaxApplier(self._path_normalizer)
 
 		# Кэш данных проекта.
-		self._project_cache: Dict[str, Tuple[Dict, float]] = {}
+		self._project_cache: Dict[str, Tuple[Optional[Dict], float]] = {}
 		self._cache_ttl = CACHE_TTL
 
 		# Ограничение частоты вызовов `on_activated`.
