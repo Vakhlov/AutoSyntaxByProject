@@ -3,7 +3,7 @@ import re
 from typing import Dict, List, Optional
 
 from .logger import logger
-
+from .types import SyntaxMap
 
 class SyntaxConfigParser:
 	"""
@@ -16,7 +16,7 @@ class SyntaxConfigParser:
 	# Регулярное выражения для проверки расширения файла.
 	EXTENSION_PATTERN = re.compile(r'\*\.([a-zA-Z0-9]+)')
 
-	def parse_syntax_map(self, project_data: Optional[Dict]) -> Optional[Dict[str, str]]:
+	def parse_syntax_map(self, project_data: Optional[Dict]) -> Optional[SyntaxMap]:
 		"""
 		Извлекает маппинг расширений на синтаксисы из настроек проекта.
 
@@ -58,7 +58,7 @@ class SyntaxConfigParser:
 		# 5. Ничего не найдено, возвращаем None.
 		return None
 
-	def _parse_extensions_format(self, extensions: Dict) -> Dict[str, str]:
+	def _parse_extensions_format(self, extensions: Dict) -> SyntaxMap:
 		"""
 		Парсит формат `extensions`.
 		Приводит ключи к нижнему регистру.
@@ -82,7 +82,7 @@ class SyntaxConfigParser:
 		# 4. Возвращаем результат.
 		return result
 
-	def _parse_project_syntaxes_format(self, project_syntaxes: List) -> Dict[str, str]:
+	def _parse_project_syntaxes_format(self, project_syntaxes: List) -> SyntaxMap:
 		"""
 		Парсит формат `project_syntaxes` (совместимость с ApplySyntax).
 		Извлекает расширения файлов из правил.

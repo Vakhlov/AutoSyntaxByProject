@@ -18,6 +18,7 @@ from AutoSyntaxByProject.main import AutoSyntaxByProject
 from AutoSyntaxByProject.SyntaxApplier import SyntaxApplier
 from AutoSyntaxByProject.SyntaxConfigParser import SyntaxConfigParser
 from AutoSyntaxByProject.SyntaxPathNormalizer import SyntaxPathNormalizer
+from AutoSyntaxByProject.types import SyntaxMap
 
 if TYPE_CHECKING:
 	import sublime
@@ -45,10 +46,10 @@ class _FakeConfigParser(SyntaxConfigParser):
 	SyntaxConfigParser, возвращающий преднастроенный syntax_map.
 	"""
 
-	def __init__(self, syntax_map: Optional[Dict[str, str]] = None) -> None:
+	def __init__(self, syntax_map: Optional[SyntaxMap] = None) -> None:
 		self._fake_map = syntax_map
 
-	def parse_syntax_map(self, project_data: Optional[Dict]) -> Optional[Dict[str, str]]:
+	def parse_syntax_map(self, project_data: Optional[Dict]) -> Optional[SyntaxMap]:
 		return self._fake_map
 
 class _FakeSyntaxApplier(SyntaxApplier):

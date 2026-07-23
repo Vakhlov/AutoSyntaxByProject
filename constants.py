@@ -1,8 +1,7 @@
 import sublime
 from typing import Any, Dict, List, Union
 
-SettingsValue = Union[bool, float, int, str, Dict[str, str], List[str]]
-SettingsDict = Dict[str, SettingsValue]
+from .types import SettingsDict
 
 # Настройки по умолчанию.
 DEFAULT_SETTINGS: SettingsDict = {

@@ -8,10 +8,11 @@ import _bootstrap
 
 import unittest
 
-from typing import Any, Dict, Optional, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
 from AutoSyntaxByProject.SyntaxApplier import SyntaxApplier
 from AutoSyntaxByProject.SyntaxPathNormalizer import SyntaxPathNormalizer
+from AutoSyntaxByProject.types import SyntaxMap
 
 if TYPE_CHECKING:
 	import sublime
@@ -29,7 +30,7 @@ class _StubNormalizer(_NormalizerBase):
 	проверять логику сравнения `SyntaxApplier` в изоляции от реального нормализатора.
 	"""
 
-	def __init__(self, mapping: Optional[Dict[str, str]] = None, default: str = "NORMALIZED") -> None:
+	def __init__(self, mapping: Optional[SyntaxMap] = None, default: str = "NORMALIZED") -> None:
 		self._mapping = dict(mapping or {})
 		self._default = default
 
