@@ -8,7 +8,7 @@ import _bootstrap
 
 import unittest
 
-from typing import Optional, TYPE_CHECKING
+from typing import Any, Dict, Optional, TYPE_CHECKING
 
 from AutoSyntaxByProject.SyntaxApplier import SyntaxApplier
 from AutoSyntaxByProject.SyntaxPathNormalizer import SyntaxPathNormalizer
@@ -29,11 +29,11 @@ class _StubNormalizer(_NormalizerBase):
 	проверять логику сравнения `SyntaxApplier` в изоляции от реального нормализатора.
 	"""
 
-	def __init__(self, mapping = None, default = "NORMALIZED"):
+	def __init__(self, mapping: Optional[Dict[str, str]] = None, default: str = "NORMALIZED") -> None:
 		self._mapping = dict(mapping or {})
 		self._default = default
 
-	def normalize(self, syntax_path):
+	def normalize(self, syntax_path: Optional[str]) -> Optional[str]:
 		if not syntax_path:
 			return None
 
@@ -45,10 +45,10 @@ class _StubSettings(_SettingsBase):
 	текущий синтаксис, для отсальных ключей — `default`.
 	"""
 
-	def __init__(self, current_syntax: Optional[str] = None):
+	def __init__(self, current_syntax: Optional[str] = None) -> None:
 		self._current_syntax = current_syntax
 
-	def get(self, key, default = None):
+	def get(self, key: str, default: Any = None) -> Any:
 		if key == "syntax":
 			return self._current_syntax
 
@@ -60,15 +60,15 @@ class _SpyView(_ViewBase):
 	Запоминает вызовы `set_syntax_file` и по запросу выбрасывает исключение.
 	"""
 
-	def __init__(self, current_syntax: Optional[str] = None, raise_on_set: bool = False):
+	def __init__(self, current_syntax: Optional[str] = None, raise_on_set: bool = False) -> None:
 		self._settings = _StubSettings(current_syntax)
 		self._raise_on_set = raise_on_set
 		self.set_syntax_file_calls = []
 
-	def settings(self):
+	def settings(self) -> _StubSettings:
 		return self._settings
 
-	def set_syntax_file(self, syntax_path) -> bool:
+	def set_syntax_file(self, syntax_path: str) -> bool:
 		if self._raise_on_set:
 			raise RuntimeError("ошибка set_syntax_file")
 
@@ -86,7 +86,7 @@ class TestSyntaxApplier(unittest.TestCase):
 
 	# apply_syntax
 
-	def testApplySyntaxSuccess(self):
+	def testApplySyntaxSuccess(self) -> None:
 		"""
 		Успех: текущий и целевой синтаксис различаются — синтаксис применяется.
 		"""
@@ -101,7 +101,7 @@ class TestSyntaxApplier(unittest.TestCase):
 		self.assertTrue(result)
 		self.assertEqual(view.set_syntax_file_calls, [_VALID_PATH])
 
-	def testApplySyntaxAlreadySet(self):
+	def testApplySyntaxAlreadySet(self) -> None:
 		"""
 		Синтаксис уже установлен: `normalize(target) == normalize(current)` —
 		повторная установка не выполняется.
@@ -117,7 +117,7 @@ class TestSyntaxApplier(unittest.TestCase):
 		self.assertFalse(result)
 		self.assertEqual(view.set_syntax_file_calls, [])
 
-	def testApplySyntaxCurrentNone(self):
+	def testApplySyntaxCurrentNone(self) -> None:
 		"""
 		Текущий синтаксис — None: нормализация текущего пропускается,
 		целевой синтаксис применяется.
@@ -133,7 +133,7 @@ class TestSyntaxApplier(unittest.TestCase):
 		self.assertTrue(result)
 		self.assertEqual(view.set_syntax_file_calls, [_VALID_PATH])
 
-	def testApplySyntaxInvalidEmpty(self):
+	def testApplySyntaxInvalidEmpty(self) -> None:
 		"""
 		Пустой путь: применение не происходит.
 		"""
@@ -148,7 +148,7 @@ class TestSyntaxApplier(unittest.TestCase):
 		self.assertFalse(result)
 		self.assertEqual(view.set_syntax_file_calls, [])
 
-	def testApplySyntaxInvalidNone(self):
+	def testApplySyntaxInvalidNone(self) -> None:
 		"""
 		Путь — None: применение не происходит.
 		"""
@@ -163,7 +163,7 @@ class TestSyntaxApplier(unittest.TestCase):
 		self.assertFalse(result)
 		self.assertEqual(view.set_syntax_file_calls, [])
 
-	def testApplySyntaxInvalidNoPrefix(self):
+	def testApplySyntaxInvalidNoPrefix(self) -> None:
 		"""
 		Путь без префикса `Packages/`: применение не происходит.
 		"""
@@ -178,7 +178,7 @@ class TestSyntaxApplier(unittest.TestCase):
 		self.assertFalse(result)
 		self.assertEqual(view.set_syntax_file_calls, [])
 
-	def testApplySyntaxInvalidNoExtension(self):
+	def testApplySyntaxInvalidNoExtension(self) -> None:
 		"""
 		Путь без расширения `.sublime-syntax`: применение не происходит.
 		"""
@@ -193,7 +193,7 @@ class TestSyntaxApplier(unittest.TestCase):
 		self.assertFalse(result)
 		self.assertEqual(view.set_syntax_file_calls, [])
 
-	def testApplySyntaxSuppressRaiseOnSetSyntaxError(self):
+	def testApplySyntaxSuppressRaiseOnSetSyntaxError(self) -> None:
 		"""
 		`set_syntax_file` выбрасывает исключение: ошибка подавляется,
 		возвращается False.
@@ -213,7 +213,7 @@ class TestSyntaxApplier(unittest.TestCase):
 
 	# _is_valid_syntax_path
 
-	def testIsValidSyntaxPathValid(self):
+	def testIsValidSyntaxPathValid(self) -> None:
 		"""
 		Корректный путь проходит проверку.
 		"""
@@ -226,7 +226,7 @@ class TestSyntaxApplier(unittest.TestCase):
 
 		self.assertTrue(result)
 
-	def testIsValidSyntaxPathEmpty(self):
+	def testIsValidSyntaxPathEmpty(self) -> None:
 		"""
 		Пустой путь не проходит проверку.
 		"""
@@ -239,7 +239,7 @@ class TestSyntaxApplier(unittest.TestCase):
 
 		self.assertFalse(result)
 
-	def testIsValidSyntaxPathNone(self):
+	def testIsValidSyntaxPathNone(self) -> None:
 		"""
 		Путь None не проходит проверку.
 		"""
@@ -252,7 +252,7 @@ class TestSyntaxApplier(unittest.TestCase):
 
 		self.assertFalse(result)
 
-	def testIsValidSyntaxPathNoPrefix(self):
+	def testIsValidSyntaxPathNoPrefix(self) -> None:
 		"""
 		Путь без префикса `Packages/` не проходит проверку.
 		"""
@@ -265,7 +265,7 @@ class TestSyntaxApplier(unittest.TestCase):
 
 		self.assertFalse(result)
 
-	def testIsValidSyntaxPathNoExtension(self):
+	def testIsValidSyntaxPathNoExtension(self) -> None:
 		"""
 		Путь без расширения `.sublime-syntax` не проходит проверку.
 		"""

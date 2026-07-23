@@ -36,7 +36,7 @@ class Window:
 	разрешения аннотаций при импорте вне Sublime Text.
 	"""
 
-def install():
+def install() -> None:
 	"""
 	Регистрирует заглушку в sys.modules. `setdefault` — чтобы не перезаписывать
 	настоящий sublime, если тесты вдруг запускаются изнутри Sublime Text.

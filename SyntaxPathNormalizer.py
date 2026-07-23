@@ -9,7 +9,7 @@ class SyntaxPathNormalizer:
 	Кэширует результаты для производительности.
 	"""
 
-	def __init__(self):
+	def __init__(self) -> None:
 		# Кэш для хранения нормализованных путей к файлам синтаксисов.
 		self._cache: Dict[str, str] = {}
 

@@ -19,12 +19,12 @@ class TestSyntaxConfigParser(unittest.TestCase):
 	Тесты SyntaxConfigParser.
 	"""
 
-	def setUp(self):
+	def setUp(self) -> None:
 		self.parser = SyntaxConfigParser()
 
 	# parse_syntax_map
 
-	def testParseSyntaxMapNone(self):
+	def testParseSyntaxMapNone(self) -> None:
 		"""
 		Нет файла данных проекта, функция возвращает None.
 		"""
@@ -33,7 +33,7 @@ class TestSyntaxConfigParser(unittest.TestCase):
 
 		self.assertIsNone(result)
 
-	def testParseSyntaxMapEmpty(self):
+	def testParseSyntaxMapEmpty(self) -> None:
 		"""
 		Пустой словарь проекта (проект не настроен), функция возвращает None.
 		"""
@@ -42,7 +42,7 @@ class TestSyntaxConfigParser(unittest.TestCase):
 
 		self.assertIsNone(result)
 
-	def testParseSyntaxMapNoSettings(self):
+	def testParseSyntaxMapNoSettings(self) -> None:
 		"""
 		В данных проекта нет настройки 'settings', функция возвращает None.
 		"""
@@ -51,7 +51,7 @@ class TestSyntaxConfigParser(unittest.TestCase):
 
 		self.assertIsNone(result)
 
-	def testParseSyntaxMapEmptySettings(self):
+	def testParseSyntaxMapEmptySettings(self) -> None:
 		"""
 		В данных проекта настройка 'settings' пустая, функция возвращает None.
 		"""
@@ -60,7 +60,7 @@ class TestSyntaxConfigParser(unittest.TestCase):
 
 		self.assertIsNone(result)
 
-	def testParseSettingsMapNeitherFormat(self):
+	def testParseSettingsMapNeitherFormat(self) -> None:
 		"""
 		В данных проекта настройка 'settings' не содержит раздлелов'extensions' или
 		'project_syntaxes', функция возвращает None.
@@ -72,7 +72,7 @@ class TestSyntaxConfigParser(unittest.TestCase):
 
 		self.assertIsNone(result)
 
-	def testParseSyntaxMapExtensionsFormat(self):
+	def testParseSyntaxMapExtensionsFormat(self) -> None:
 		"""
 		Формат 'extensions': ключи переводятся к нижнему регистру.
 		"""
@@ -95,7 +95,7 @@ class TestSyntaxConfigParser(unittest.TestCase):
 
 		self.assertEqual(result, expected)
 
-	def testParseSyntaxMapProjectSyntaxesFormat(self):
+	def testParseSyntaxMapProjectSyntaxesFormat(self) -> None:
 		"""
 		Формат 'project_syntaxes': расширение извлекается из '*.ext'.
 		"""
@@ -115,7 +115,7 @@ class TestSyntaxConfigParser(unittest.TestCase):
 
 		self.assertEqual(result, expected)
 
-	def testParseSyntaxMapExtensionsPriority(self):
+	def testParseSyntaxMapExtensionsPriority(self) -> None:
 		"""
 		Если заданы оба формата, приоритет за 'extensions'.
 		"""
@@ -140,7 +140,7 @@ class TestSyntaxConfigParser(unittest.TestCase):
 
 	# _parse_extensions_format
 
-	def testParseExtensionsLowcasesKeys(self):
+	def testParseExtensionsLowcasesKeys(self) -> None:
 		"""
 		Ключи приводятся к нижнему регистру, значения не меняются.
 		"""
@@ -153,7 +153,7 @@ class TestSyntaxConfigParser(unittest.TestCase):
 
 	# _parse_project_syntaxes_format
 
-	def testParseProjectSyntaxesSkipsNoSyntax(self):
+	def testParseProjectSyntaxesSkipsNoSyntax(self) -> None:
 		"""
 		Правило без 'syntax' пропускается.
 		"""
@@ -164,7 +164,7 @@ class TestSyntaxConfigParser(unittest.TestCase):
 
 		self.assertEqual(result, {})
 
-	def testParseProjectSyntaxesSkipsNoRules(self):
+	def testParseProjectSyntaxesSkipsNoRules(self) -> None:
 		"""
 		Правило без 'rules' пропускается
 		"""
@@ -175,7 +175,7 @@ class TestSyntaxConfigParser(unittest.TestCase):
 
 		self.assertEqual(result, {})
 
-	def testParseProjectSyntaxesExtractsExtension(self):
+	def testParseProjectSyntaxesExtractsExtension(self) -> None:
 		"""
 		Расширение извлекается из паттерна '*.html'.
 		"""
@@ -191,7 +191,7 @@ class TestSyntaxConfigParser(unittest.TestCase):
 
 		self.assertEqual(result, expected)
 
-	def testParseProjectSyntaxesLowercasesExtension(self):
+	def testParseProjectSyntaxesLowercasesExtension(self) -> None:
 		"""
 		Расширение из '*.HTML' переводится к нижнему регистру.
 		"""
@@ -207,7 +207,7 @@ class TestSyntaxConfigParser(unittest.TestCase):
 
 		self.assertEqual(result, expected)
 
-	def testParseProjectSyntaxesSkipsEntryWithoutFileName(self):
+	def testParseProjectSyntaxesSkipsEntryWithoutFileName(self) -> None:
 		"""
 		Элемент 'rules' без ключа 'file_name' пропускается, обработка продолжается.
 		"""
@@ -223,7 +223,7 @@ class TestSyntaxConfigParser(unittest.TestCase):
 
 		self.assertEqual(result, expected)
 
-	def testParseProjectSyntaxesBreaksAfterFirstMatch(self):
+	def testParseProjectSyntaxesBreaksAfterFirstMatch(self) -> None:
 		"""
 		Внутри одного правила берётся только первое совпавшее расширение.
 		"""
@@ -239,7 +239,7 @@ class TestSyntaxConfigParser(unittest.TestCase):
 
 		self.assertEqual(result, expected)
 
-	def testParseProjectSyntaxesMultipleRules(self):
+	def testParseProjectSyntaxesMultipleRules(self) -> None:
 		"""
 		Несколько независимых правил собираются в один словарь.
 		"""

@@ -12,7 +12,7 @@ class SyntaxApplier:
 	Проверяет валидность и обрабатывает ошибки.
 	"""
 
-	def __init__(self, path_normalizer: SyntaxPathNormalizer):
+	def __init__(self, path_normalizer: SyntaxPathNormalizer) -> None:
 		"""
 		Инициализация с экземпляром нормализатора путей.
 
@@ -36,7 +36,7 @@ class SyntaxApplier:
 		logger.debug(f"попытка применить синтаксис: {syntax_path}")
 
 		# 1. Проверяем валидность пути к синтаксису.
-		if not syntax_path or self._is_valid_syntax_path(syntax_path):
+		if not syntax_path or not self._is_valid_syntax_path(syntax_path):
 			logger.warning(f"неправильный путь к синтаксису: {syntax_path}")
 			return False
 

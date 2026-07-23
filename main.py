@@ -16,7 +16,7 @@ class AutoSyntaxByProject(sublime_plugin.EventListener):
 	Только подписывается на события и координирует работу других классов.
 	"""
 
-	def __init__(self):
+	def __init__(self) -> None:
 		# Создаем экземпляры вспомогательных классов.
 		self._path_normalizer = SyntaxPathNormalizer()
 		self._config_parser = SyntaxConfigParser()
@@ -34,7 +34,7 @@ class AutoSyntaxByProject(sublime_plugin.EventListener):
 
 	# --- Методы-обработчики событий Sublime Text ---
 
-	def on_activated(self, view: sublime.View):
+	def on_activated(self, view: sublime.View) -> None:
 		"""
 		Срабатывает при переключении на вкладку.
 		Ограничивает частоту вызовов, чтобы избежать лишней нагрузки.
@@ -60,7 +60,7 @@ class AutoSyntaxByProject(sublime_plugin.EventListener):
 		# 5. И применяем синтаксис.
 		self._apply_syntax_if_needed(view)
 
-	def on_load(self, view: sublime.View):
+	def on_load(self, view: sublime.View) -> None:
 		"""
 		Срабатывает при загрузке (открытии) файла.
 		"""
@@ -68,7 +68,7 @@ class AutoSyntaxByProject(sublime_plugin.EventListener):
 
 		self._apply_syntax_if_needed(view)
 
-	def on_post_save(self, view: sublime.View):
+	def on_post_save(self, view: sublime.View) -> None:
 		"""
 		Срабатывает после сохранения файла.
 		"""
@@ -78,7 +78,7 @@ class AutoSyntaxByProject(sublime_plugin.EventListener):
 
 	# --- Основные методы логики ---
 
-	def _apply_syntax_if_needed(self, view: sublime.View):
+	def _apply_syntax_if_needed(self, view: sublime.View) -> None:
 		"""
 		Основная логика плагина.
 		Проверяет, нужно ли применить синтаксис, и применяет если нужно.

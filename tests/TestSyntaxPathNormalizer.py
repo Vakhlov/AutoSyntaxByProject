@@ -15,48 +15,48 @@ class TestSyntaxPathNormalizer(unittest.TestCase):
 	Тесты для SyntaxPathNormalizer.
 	"""
 
-	def setUp(self):
+	def setUp(self) -> None:
 		"""
 		Выполняется перед каждым тестом.
 		"""
 		self.normalizer = SyntaxPathNormalizer()
 
-	def testNormalizeSimple(self):
+	def testNormalizeSimple(self) -> None:
 		"""
 		Тест: нормализация простого пути.
 		"""
 		result = self.normalizer.normalize("Packages/HTML/HTML.sublime-syntax")
 		self.assertEqual(result, "HTML/HTML")
 
-	def testNormalizeNone(self):
+	def testNormalizeNone(self) -> None:
 		"""
 		Тест: передача None.
 		"""
 		result = self.normalizer.normalize(None)
 		self.assertIsNone(result)
 
-	def testNormalizeEmpty(self):
+	def testNormalizeEmpty(self) -> None:
 		"""
 		Тест: передача пустой строки.
 		"""
 		result = self.normalizer.normalize("")
 		self.assertIsNone(result)
 
-	def testNormalizeWithoutPackages(self):
+	def testNormalizeWithoutPackages(self) -> None:
 		"""
 		Тест: путь без префикса `Packages/`.
 		"""
 		result = self.normalizer.normalize("HTML/HTML.sublime-syntax")
 		self.assertEqual(result, "HTML/HTML")
 
-	def testNormalizeWithoutExtension(self):
+	def testNormalizeWithoutExtension(self) -> None:
 		"""
 		Тест: путь без расширения `.sublime-syntax`.
 		"""
 		result = self.normalizer.normalize("Packages/HTML/HTML")
 		self.assertEqual(result, "HTML/HTML")
 
-	def testNormalizeCache(self):
+	def testNormalizeCache(self) -> None:
 		"""
 		Тест: кэширование.
 		"""

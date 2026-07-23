@@ -21,11 +21,11 @@ class TextSetupLogger(unittest.TestCase):
 	`tearDown` обработчики снимаются — чтобы тест можно было безопасно перезапустить.
 	"""
 
-	def setUp(self):
+	def setUp(self) -> None:
 		self._logger_name = f"TestSetupLogger.{self._testMethodName}"
 		self._original_debug = logger_module.DEBUG
 
-	def tearDown(self):
+	def tearDown(self) -> None:
 		# Снимаем обработчики с тестового логгера.
 		log = logging.getLogger(self._logger_name)
 
@@ -35,7 +35,7 @@ class TextSetupLogger(unittest.TestCase):
 		# Возвращаем DEBUG
 		logger_module.DEBUG = self._original_debug
 
-	def testReturnLogger(self):
+	def testReturnLogger(self) -> None:
 		"""
 		Возвращает экземпляр `logging.Logger`.
 		"""
@@ -44,7 +44,7 @@ class TextSetupLogger(unittest.TestCase):
 
 		self.assertIsInstance(result, logging.Logger)
 
-	def testAddsSingleStreamHandler(self):
+	def testAddsSingleStreamHandler(self) -> None:
 		"""
 		При первом вызове добаляется ровно один StreamHandler.
 		"""
@@ -54,7 +54,7 @@ class TextSetupLogger(unittest.TestCase):
 		self.assertEqual(len(log.handlers), 1)
 		self.assertIsInstance(log.handlers[0], logging.StreamHandler)
 
-	def testLevelInfoWhenDebugFalse(self):
+	def testLevelInfoWhenDebugFalse(self) -> None:
 		"""
 		При DEBUG = False уровень отладки INFO.
 		"""
@@ -65,7 +65,7 @@ class TextSetupLogger(unittest.TestCase):
 
 		self.assertEqual(log.level, logging.INFO)
 
-	def testLevelDebugWhenDebugTrue(self):
+	def testLevelDebugWhenDebugTrue(self) -> None:
 		"""
 		При DEBUG = True уровень отладки DEBUG.
 		"""
@@ -76,7 +76,7 @@ class TextSetupLogger(unittest.TestCase):
 
 		self.assertEqual(log.level, logging.DEBUG)
 
-	def testPropagateFalse(self):
+	def testPropagateFalse(self) -> None:
 		"""
 		Логи не передаются родительским логгерам (изоляция).
 		"""
@@ -85,7 +85,7 @@ class TextSetupLogger(unittest.TestCase):
 
 		self.assertFalse(log.propagate)
 
-	def testFormatterPrefix(self):
+	def testFormatterPrefix(self) -> None:
 		"""
 		Сообщения форматируются с префиксом 'AutoSyntaxByProject'.
 		"""
@@ -105,7 +105,7 @@ class TextSetupLogger(unittest.TestCase):
 
 		self.assertEqual(handler.format(record), "AutoSyntaxByProject: Hello")
 
-	def testIdempotentNoDuplicateHandlers(self):
+	def testIdempotentNoDuplicateHandlers(self) -> None:
 		"""
 		Повторный вызов с тем же именем не дублирует обработчики.
 		"""

@@ -11,7 +11,7 @@ import _bootstrap
 import logging
 import unittest
 
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, Dict, Optional, TYPE_CHECKING
 
 from AutoSyntaxByProject import main as main_module
 from AutoSyntaxByProject.main import AutoSyntaxByProject
@@ -34,10 +34,10 @@ class _FakeClock():
 	"""
 	Управляемые часы: модуль `time` плагина подменяется этим объектом.
 	"""
-	def __init__(self, start = 1000.0):
+	def __init__(self, start: float = 1000.0) -> None:
 		self.now = start
 
-	def time(self):
+	def time(self) -> float:
 		return self.now
 
 class _FakeConfigParser(SyntaxConfigParser):
@@ -45,10 +45,10 @@ class _FakeConfigParser(SyntaxConfigParser):
 	SyntaxConfigParser, возвращающий преднастроенный syntax_map.
 	"""
 
-	def __init__(self, syntax_map = None):
+	def __init__(self, syntax_map: Optional[Dict[str, str]] = None) -> None:
 		self._fake_map = syntax_map
 
-	def parse_syntax_map(self, project_data):
+	def parse_syntax_map(self, project_data: Optional[Dict]) -> Optional[Dict[str, str]]:
 		return self._fake_map
 
 class _FakeSyntaxApplier(SyntaxApplier):
@@ -56,12 +56,12 @@ class _FakeSyntaxApplier(SyntaxApplier):
 	SyntaxApplier, записывающий вызовы apply_syntax (шпион).
 	"""
 
-	def __init__(self, return_value: bool = True):
+	def __init__(self, return_value: bool = True) -> None:
 		super().__init__(SyntaxPathNormalizer())
 		self._return_value = return_value
 		self.calls = []
 
-	def apply_syntax(self, view, syntax_path):
+	def apply_syntax(self, view: sublime.View, syntax_path: Optional[str]) -> bool:
 		self.calls.append(syntax_path)
 		return self._return_value
 
@@ -76,7 +76,7 @@ class _FakeView(_ViewBase):
 		file_name: Optional[str] = None,
 		window: Optional[sublime.Window] = None,
 		view_id: int = 1
-	):
+	) -> None:
 		self._file_name = file_name
 		self._id = view_id
 		self._window = window
@@ -102,7 +102,7 @@ class _FakeWindow(_WindowBase):
 		project_data: Optional[dict] = None,
 		win_id: int = 1,
 		raise_on_data: bool = False
-	):
+	) -> None:
 		self._id = win_id
 		self._project_data = project_data
 		self._project_file = project_file
@@ -128,7 +128,7 @@ class TestAutoSyntaxByProject(unittest.TestCase):
 	Тесты AutoSyntaxByProject.
 	"""
 
-	def setUp(self):
+	def setUp(self) -> None:
 		# Приглушаем логгер плагина, чтобы не забивать вывод при создании экземпляра.
 		self._logger = logging.getLogger("AutoSyntaxByProject.logger")
 		self._original_level = self._logger.level
@@ -147,27 +147,27 @@ class TestAutoSyntaxByProject(unittest.TestCase):
 		self._plugin._config_parser = self._config_parser
 		self._plugin._syntax_applier = self._syntax_applier
 
-	def tearDown(self):
+	def tearDown(self) -> None:
 		self._main.time = self._original_time
 		self._logger.setLevel(self._original_level)
 
 	# _is_supported_extension
 
-	def testIsSupportedExtensionHtml(self):
+	def testIsSupportedExtensionHtml(self) -> None:
 		"""
 		`.html` поддерживается.
 		"""
 
 		self.assertTrue(self._plugin._is_supported_extension(".html"))
 
-	def testIsSupportedExtensionTxt(self):
+	def testIsSupportedExtensionTxt(self) -> None:
 		"""
 		`.txt` не поддерживается.
 		"""
 
 		self.assertFalse(self._plugin._is_supported_extension(".txt"))
 
-	def testIsSupportedExtensionDoesNotLowerCase(self):
+	def testIsSupportedExtensionDoesNotLowerCase(self) -> None:
 		"""
 		Метод сам не приводит к нижнему регистру — это задача вызывающего.
 		"""
@@ -176,7 +176,7 @@ class TestAutoSyntaxByProject(unittest.TestCase):
 
 	# _get_extension_key
 
-	def testGetExtensionKeyAlias(self):
+	def testGetExtensionKeyAlias(self) -> None:
 		"""
 		Возвращает псевдоним расширения в качестве ключа,
 		если для этого расширения настроен псевдоним.
@@ -184,7 +184,7 @@ class TestAutoSyntaxByProject(unittest.TestCase):
 
 		self.assertEqual(self._plugin._get_extension_key(".htm"), "html")
 
-	def testGetExtensionKeyNoAlias(self):
+	def testGetExtensionKeyNoAlias(self) -> None:
 		"""
 		Возвращает само расширение без точки в качестве ключа,
 		если для этого расширения не настроен песевдоним.
@@ -194,7 +194,7 @@ class TestAutoSyntaxByProject(unittest.TestCase):
 
 	# _get_project_data
 
-	def testGetProjectDataNoWindow(self):
+	def testGetProjectDataNoWindow(self) -> None:
 		"""
 		Возвращает None, если нет окна.
 		"""
@@ -203,7 +203,7 @@ class TestAutoSyntaxByProject(unittest.TestCase):
 
 		self.assertIsNone(self._plugin._get_project_data(view))
 
-	def testGetProjectDataNoProjectFile(self):
+	def testGetProjectDataNoProjectFile(self) -> None:
 		"""
 		Возвращает None, если нет файла проекта (`.sublime-project`).
 		"""
@@ -213,7 +213,7 @@ class TestAutoSyntaxByProject(unittest.TestCase):
 
 		self.assertIsNone(self._plugin._get_project_data(view))
 
-	def testGetProjectDataLoadsAndCaches(self):
+	def testGetProjectDataLoadsAndCaches(self) -> None:
 		"""
 		Первый вызов загружает данные и кэширует их,
 		второй вызов возвращает данные из кэша.
@@ -229,7 +229,7 @@ class TestAutoSyntaxByProject(unittest.TestCase):
 		self.assertEqual(second, _PROJECT_DATA)
 		self.assertEqual(window.project_data_calls, 1)
 
-	def testGetProjectDataRefreshAfterTTL(self):
+	def testGetProjectDataRefreshAfterTTL(self) -> None:
 		"""
 		После истечения TTL данные загружаются заново.
 		"""
@@ -243,7 +243,7 @@ class TestAutoSyntaxByProject(unittest.TestCase):
 
 		self.assertEqual(window.project_data_calls, 2)
 
-	def testGetProjectDataHandlesException(self):
+	def testGetProjectDataHandlesException(self) -> None:
 		"""
 		Возвращает None, если `window.project_data()` выбрасывает исключение.
 		"""
@@ -255,7 +255,7 @@ class TestAutoSyntaxByProject(unittest.TestCase):
 
 	# _apply_syntax_if_needed
 
-	def testApplySyntaxIfNeededNoFileName(self):
+	def testApplySyntaxIfNeededNoFileName(self) -> None:
 		"""
 		Не применяет синтаксис, если у view нет имени файла.
 		"""
@@ -269,7 +269,7 @@ class TestAutoSyntaxByProject(unittest.TestCase):
 
 		self.assertEqual(self._syntax_applier.calls, [])
 
-	def testApplySyntaxIfNeededUnsupportedExtension(self):
+	def testApplySyntaxIfNeededUnsupportedExtension(self) -> None:
 		"""
 		Не применяет синтаксис, если расширение файла не поддерживается.
 		"""
@@ -283,7 +283,7 @@ class TestAutoSyntaxByProject(unittest.TestCase):
 
 		self.assertEqual(self._syntax_applier.calls, [])
 
-	def testApplySyntaxIfNeededNoWindow(self):
+	def testApplySyntaxIfNeededNoWindow(self) -> None:
 		"""
 		Не применяет синтаксис, если нет окна (и потому нет данных проекта).
 		"""
@@ -296,7 +296,7 @@ class TestAutoSyntaxByProject(unittest.TestCase):
 
 		self.assertEqual(self._syntax_applier.calls, [])
 
-	def testApplySyntaxIfNeededNoSyntaxMap(self):
+	def testApplySyntaxIfNeededNoSyntaxMap(self) -> None:
 		"""
 		Не применяет синтаксис, если в проекте нет настроек синтаксисов.
 		"""
@@ -310,7 +310,7 @@ class TestAutoSyntaxByProject(unittest.TestCase):
 
 		self.assertEqual(self._syntax_applier.calls, [])
 
-	def testApplySyntaxIfNeededNoKeyInMap(self):
+	def testApplySyntaxIfNeededNoKeyInMap(self) -> None:
 		"""
 		Не применяет синтаксис к файлу с поддерживаемым расширением, если
 		расширение не указано в настройках.
@@ -325,7 +325,7 @@ class TestAutoSyntaxByProject(unittest.TestCase):
 
 		self.assertEqual(self._syntax_applier.calls, [])
 
-	def testApplySyntaxIfNeededEmptyTarget(self):
+	def testApplySyntaxIfNeededEmptyTarget(self) -> None:
 		"""
 		Не применяет синтаксис к файлу, если целевой синтаксис пустой.
 		"""
@@ -339,7 +339,7 @@ class TestAutoSyntaxByProject(unittest.TestCase):
 
 		self.assertEqual(self._syntax_applier.calls, [])
 
-	def testApplySyntaxIfNeededApplies(self):
+	def testApplySyntaxIfNeededApplies(self) -> None:
 		"""
 		Применяет синтаксис, если расширение поддерживается, есть окно, настройки, синтаксис.
 		"""
@@ -353,7 +353,7 @@ class TestAutoSyntaxByProject(unittest.TestCase):
 
 		self.assertEqual(self._syntax_applier.calls, [_HTML_SYNTAX_PATH])
 
-	def testApplySyntaxIfNeededAliasExtension(self):
+	def testApplySyntaxIfNeededAliasExtension(self) -> None:
 		"""
 		Применяет синтаксис к файлу, если для его расширения существует псевдоним в настройках.
 		"""
@@ -369,7 +369,7 @@ class TestAutoSyntaxByProject(unittest.TestCase):
 
 	# события
 
-	def testOnActivatedDebounce(self):
+	def testOnActivatedDebounce(self) -> None:
 		"""
 		Событие on_activated обрабатывается не чаще, чем указано в настройках.
 		"""
@@ -392,7 +392,7 @@ class TestAutoSyntaxByProject(unittest.TestCase):
 		self._plugin.on_activated(view)
 		self.assertEqual(len(self._syntax_applier.calls), 2)
 
-	def testOnLoadApplies(self):
+	def testOnLoadApplies(self) -> None:
 		"""
 		Применяет синтаксис при обработке события on_load (к только что открытому файлу).
 		"""
@@ -406,7 +406,7 @@ class TestAutoSyntaxByProject(unittest.TestCase):
 
 		self.assertEqual(self._syntax_applier.calls, [_HTML_SYNTAX_PATH])
 
-	def testOnPostSaveApplies(self):
+	def testOnPostSaveApplies(self) -> None:
 		"""
 		Применяет синтаксис при обработке события on_post_save (к только что сохраненному файлу).
 		"""
