@@ -8,11 +8,8 @@ import _bootstrap
 
 import unittest
 
+from _fixtures import _HTML_SYNTAX_PATH, _MD_SYNTAX_PATH
 from AutoSyntaxByProject.SyntaxConfigParser import SyntaxConfigParser
-
-# Пути к файлам синтаксисов.
-_HTML_SYNTAX_PATH = "Packages/Liquid/HTML (Liquid).sublime-syntax"
-_MD_SYNTAX_PATH = "Packages/Liquid/Markdown (Liquid).sublime-syntax"
 
 class TestSyntaxConfigParser(unittest.TestCase):
 	"""

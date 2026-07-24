@@ -13,6 +13,7 @@ import unittest
 
 from typing import Any, Dict, Optional, TYPE_CHECKING
 
+from _fixtures import _HTML_SYNTAX_PATH, _MD_SYNTAX_PATH
 from AutoSyntaxByProject import main as main_module
 from AutoSyntaxByProject.main import AutoSyntaxByProject
 from AutoSyntaxByProject.SyntaxApplier import SyntaxApplier
@@ -26,8 +27,6 @@ if TYPE_CHECKING:
 _ViewBase = sublime.View if TYPE_CHECKING else object
 _WindowBase = sublime.Window if TYPE_CHECKING else object
 
-_HTML_SYNTAX_PATH = "Packages/Liquid/HTML (Liquid).sublime-syntax"
-_MD_SYNTAX_PATH = "Packages/Liquid/Markdown (Liquid).sublime-syntax"
 _PROJECT_DATA = {"settings": {"extensions": {"html": _HTML_SYNTAX_PATH}}}
 _PROJECT_FILE = "/project/example.sublime-project"
 
