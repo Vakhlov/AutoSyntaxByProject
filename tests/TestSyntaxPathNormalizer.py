@@ -8,6 +8,7 @@ import _bootstrap
 
 import unittest
 
+from _fixtures import _DEFAULT_HTML_SYNTAX_PATH
 from AutoSyntaxByProject.SyntaxPathNormalizer import SyntaxPathNormalizer
 
 class TestSyntaxPathNormalizer(unittest.TestCase):
@@ -25,7 +26,7 @@ class TestSyntaxPathNormalizer(unittest.TestCase):
 		"""
 		Тест: нормализация простого пути.
 		"""
-		result = self.normalizer.normalize("Packages/HTML/HTML.sublime-syntax")
+		result = self.normalizer.normalize(_DEFAULT_HTML_SYNTAX_PATH)
 		self.assertEqual(result, "HTML/HTML")
 
 	def testNormalizeNone(self) -> None:
@@ -60,7 +61,7 @@ class TestSyntaxPathNormalizer(unittest.TestCase):
 		"""
 		Тест: кэширование.
 		"""
-		path = "Packages/HTML/HTML.sublime-syntax"
+		path = _DEFAULT_HTML_SYNTAX_PATH
 		first = self.normalizer.normalize(path)
 		second = self.normalizer.normalize(path)
 

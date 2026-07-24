@@ -6,6 +6,9 @@
 при запуске как пакет, и как отдельные модули из `tests/`.
 """
 
-# Синтаксисы Liquid
+# Встроенный синтаксис HTML из дистрибутива Sublime Text.
+_DEFAULT_HTML_SYNTAX_PATH = "Packages/HTML/HTML.sublime-syntax"
+
+# Синтаксисы Liquid.
 _HTML_SYNTAX_PATH = "Packages/Liquid/HTML (Liquid).sublime-syntax"
 _MD_SYNTAX_PATH = "Packages/Liquid/Markdown (Liquid).sublime-syntax"

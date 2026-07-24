@@ -10,6 +10,7 @@ import unittest
 
 from typing import Any, Optional, TYPE_CHECKING
 
+from _fixtures import _DEFAULT_HTML_SYNTAX_PATH
 from AutoSyntaxByProject.SyntaxApplier import SyntaxApplier
 from AutoSyntaxByProject.SyntaxPathNormalizer import SyntaxPathNormalizer
 from AutoSyntaxByProject.types import SyntaxMap
@@ -77,9 +78,6 @@ class _SpyView(_ViewBase):
 
 		return True
 
-# Правильный путь к синтаксису.
-_VALID_PATH = "Packages/HTML/HTML.sublime-syntax"
-
 class TestSyntaxApplier(unittest.TestCase):
 	"""
 	Тесты для SyntaxApplier.
@@ -92,15 +90,15 @@ class TestSyntaxApplier(unittest.TestCase):
 		Успех: текущий и целевой синтаксис различаются — синтаксис применяется.
 		"""
 		
-		normalizer = _StubNormalizer(mapping = {_VALID_PATH: "HTML/HTML"})
+		normalizer = _StubNormalizer(mapping = {_DEFAULT_HTML_SYNTAX_PATH: "HTML/HTML"})
 		view = _SpyView(current_syntax = "Packages/Plain/HTML.sublime-syntax")
 
 		applier = SyntaxApplier(normalizer)
 
-		result = applier.apply_syntax(view, _VALID_PATH)
+		result = applier.apply_syntax(view, _DEFAULT_HTML_SYNTAX_PATH)
 
 		self.assertTrue(result)
-		self.assertEqual(view.set_syntax_file_calls, [_VALID_PATH])
+		self.assertEqual(view.set_syntax_file_calls, [_DEFAULT_HTML_SYNTAX_PATH])
 
 	def testApplySyntaxAlreadySet(self) -> None:
 		"""
@@ -108,12 +106,12 @@ class TestSyntaxApplier(unittest.TestCase):
 		повторная установка не выполняется.
 		"""
 
-		normalizer = _StubNormalizer(mapping = {_VALID_PATH: "HTML/HTML"})
-		view = _SpyView(current_syntax = _VALID_PATH)
+		normalizer = _StubNormalizer(mapping = {_DEFAULT_HTML_SYNTAX_PATH: "HTML/HTML"})
+		view = _SpyView(current_syntax = _DEFAULT_HTML_SYNTAX_PATH)
 
 		applier = SyntaxApplier(normalizer)
 
-		result = applier.apply_syntax(view, _VALID_PATH)
+		result = applier.apply_syntax(view, _DEFAULT_HTML_SYNTAX_PATH)
 
 		self.assertFalse(result)
 		self.assertEqual(view.set_syntax_file_calls, [])
@@ -129,10 +127,10 @@ class TestSyntaxApplier(unittest.TestCase):
 
 		applier = SyntaxApplier(normalizer)
 
-		result = applier.apply_syntax(view, _VALID_PATH)
+		result = applier.apply_syntax(view, _DEFAULT_HTML_SYNTAX_PATH)
 
 		self.assertTrue(result)
-		self.assertEqual(view.set_syntax_file_calls, [_VALID_PATH])
+		self.assertEqual(view.set_syntax_file_calls, [_DEFAULT_HTML_SYNTAX_PATH])
 
 	def testApplySyntaxInvalidEmpty(self) -> None:
 		"""
@@ -200,7 +198,7 @@ class TestSyntaxApplier(unittest.TestCase):
 		возвращается False.
 		"""
 
-		normalizer = _StubNormalizer(mapping = {_VALID_PATH: "HTML/HTML"})
+		normalizer = _StubNormalizer(mapping = {_DEFAULT_HTML_SYNTAX_PATH: "HTML/HTML"})
 		view = _SpyView(
 			current_syntax = "Packages/Plain/HTML.sublime-syntax",
 			raise_on_set = True
@@ -208,7 +206,7 @@ class TestSyntaxApplier(unittest.TestCase):
 
 		applier = SyntaxApplier(normalizer)
 
-		result = applier.apply_syntax(view, _VALID_PATH)
+		result = applier.apply_syntax(view, _DEFAULT_HTML_SYNTAX_PATH)
 
 		self.assertFalse(result)
 
@@ -223,7 +221,7 @@ class TestSyntaxApplier(unittest.TestCase):
 
 		applier = SyntaxApplier(normalizer)
 
-		result = applier._is_valid_syntax_path(_VALID_PATH)
+		result = applier._is_valid_syntax_path(_DEFAULT_HTML_SYNTAX_PATH)
 
 		self.assertTrue(result)
 
