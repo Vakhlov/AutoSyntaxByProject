@@ -30,7 +30,7 @@ class SyntaxApplier:
 			view: Представление Sublime Text.
 			syntax_path: Путь к файлу синтаксиса.
 
-		Return:
+		Returns:
 			`True` в случае успеха, `False` в случае ошибки.
 		"""
 		logger.debug(f"попытка применить синтаксис: {syntax_path}")

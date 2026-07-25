@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Установить coverage
+        run: pip install coverage
+
+      - name: Тесты и покрытие
+        run: coverage run -m unittest discover -s tests -t . -p 'Test*.py'
+
+      - name: Отчет
+        run: |
+          coverage report
+          coverage json
+
+      - name: Сгенерировать SVG-бейдж
+        run: python scripts/coverage_badge.py coverage.json badges/coverage.svg
+
+      - name: Коммит бейджа (только на push, одна версия Python)
+        if: github.event_name == "push" && matrix.python-version == "3.8"
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add badges/coverage.svg
+          if git diff --cached --quiet; then
+            echo "бейдж не изменился — пропускаю"
+          else
+            git commit -m "chore(ci): update coverage badge"
+            git push
+          fi

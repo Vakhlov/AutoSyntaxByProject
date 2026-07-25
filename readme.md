@@ -1,5 +1,7 @@
 # AutoSyntaxByProject
 
+![coverage](badges/coverage.svg)
+
 > **Плагин для Sublime Text 4**
 > Автоматически применяет синтаксис Liquid для HTML и Markdown файлов в проектах Jekyll.
 

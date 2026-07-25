@@ -10,9 +10,12 @@ Thumbs.db
 
 # Python
 __pycache__/
+.coverage
+.venv
 *.pyc
 *.pyd
 *.pyo
+coverage.json
 
 # etc
 notes/
