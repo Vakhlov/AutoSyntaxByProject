@@ -12,3 +12,7 @@ _DEFAULT_HTML_SYNTAX_PATH = "Packages/HTML/HTML.sublime-syntax"
 # Синтаксисы Liquid.
 _HTML_SYNTAX_PATH = "Packages/Liquid/HTML (Liquid).sublime-syntax"
 _MD_SYNTAX_PATH = "Packages/Liquid/Markdown (Liquid).sublime-syntax"
+
+# Данные `.sublime-project` для тестирования применения синтаксисов.
+_PROJECT_DATA = {"settings": {"extensions": {"html": _HTML_SYNTAX_PATH}}}
+_PROJECT_FILE = "/project/example.sublime-project"

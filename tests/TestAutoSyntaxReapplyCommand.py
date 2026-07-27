@@ -13,18 +13,10 @@ import unittest
 
 import sublime # Заглушка (см. _bootstrap) — нужна для констрирования `Edit`.
 
-from _fixtures import _HTML_SYNTAX_PATH
+from _fakes import _FakeConfigParser, _FakeSyntaxApplier, _FakeView, _FakeWindow
+from _fixtures import _HTML_SYNTAX_PATH, _PROJECT_DATA, _PROJECT_FILE
 from AutoSyntaxByProject.main import AutoSyntaxByProject
 from AutoSyntaxByProject.AutoSyntaxReapplyCommand import AutoSyntaxReapplyCommand
-
-from TestAutoSyntaxByProject import (
-	_PROJECT_DATA,
-	_PROJECT_FILE,
-	_FakeConfigParser,
-	_FakeSyntaxApplier,
-	_FakeView,
-	_FakeWindow
-)
 
 class TestAutoSyntaxReapplyCommand(unittest.TestCase):
 	"""
