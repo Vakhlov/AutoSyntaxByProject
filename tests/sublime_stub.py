@@ -10,6 +10,12 @@ class _Settings:
 	def get(self, key, default = None):
 		return default
 
+class Edit:
+	"""
+	Заглушка `sublime.Edit` — нужна для разрешения аннотации `edit: sublime.Edit` в
+	сигнатуре `AutoSyntaxReapplyCommand.run` при импорте вне Sublime Text.
+	"""
+
 class EventListener:
 	"""
 	Заглушка `sublime_plugin.EventListener` — базовый класс обработчиков событий
@@ -22,6 +28,15 @@ class Settings:
 	Заглушка `sublime.Settings` — нужна, чтобы тестовые подделки настроек могли от неё
 	наследоваться (для Pyright) вне Sublime Text.
 	"""
+
+class TextCommand:
+	"""
+	Заглушка `sublime_plugin.TextCommand` — нужна, чтобы команда
+	`AutoSyntaxReapplyCommand` определилась при импорте вне Sublime Text.
+	"""
+
+	def __init__(self, view: Any) -> None:
+		self.view = view
 
 class View:
 	"""
@@ -43,6 +58,7 @@ def install() -> None:
 	"""
 	stub: Any = types.ModuleType("sublime")
 	stub.load_settings = lambda name: _Settings()
+	stub.Edit = Edit
 	stub.Settings = Settings
 	stub.View = View
 	stub.Window = Window
@@ -50,4 +66,5 @@ def install() -> None:
 
 	plugin: Any = types.ModuleType("sublime_plugin")
 	plugin.EventListener = EventListener
+	plugin.TextCommand = TextCommand
 	sys.modules.setdefault("sublime_plugin", plugin)

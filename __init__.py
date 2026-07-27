@@ -1,4 +1,5 @@
 from .main import AutoSyntaxByProject
+from .AutoSyntaxReapplyCommand import AutoSyntaxReapplyCommand
 
-# Позволяет Sublime Text найти главный класс.
-__all__ = ['AutoSyntaxByProject']
+# Позволяет Sublime Text найти главные классы.
+__all__ = ["AutoSyntaxByProject", "AutoSyntaxReapplyCommand"]

@@ -11,7 +11,7 @@ import _bootstrap
 import logging
 import unittest
 
-from typing import Any, Dict, Optional, TYPE_CHECKING
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 from _fixtures import _HTML_SYNTAX_PATH, _MD_SYNTAX_PATH
 from AutoSyntaxByProject import main as main_module
@@ -101,12 +101,14 @@ class _FakeWindow(_WindowBase):
 		project_file: Optional[str] = None,
 		project_data: Optional[dict] = None,
 		win_id: int = 1,
-		raise_on_data: bool = False
+		raise_on_data: bool = False,
+		views: Optional[List[sublime.View]] = None
 	) -> None:
 		self._id = win_id
 		self._project_data = project_data
 		self._project_file = project_file
 		self._raise_on_data = raise_on_data
+		self._views = views or []
 		self.project_data_calls = 0
 
 	def id(self) -> int:
@@ -122,6 +124,9 @@ class _FakeWindow(_WindowBase):
 
 	def project_file_name(self) -> Optional[str]:
 		return self._project_file
+
+	def views(self) -> List[sublime.View]:
+		return self._views
 
 class TestAutoSyntaxByProject(unittest.TestCase):
 	"""
@@ -367,6 +372,62 @@ class TestAutoSyntaxByProject(unittest.TestCase):
 
 		self.assertEqual(self._syntax_applier.calls, [_HTML_SYNTAX_PATH])
 
+	# _is_project_file
+
+	def testIsProjectFileTrue(self) -> None:
+		"""
+		Файл `.sublime-project` распознаётся как файл проекта.
+		"""
+
+		view = _FakeView(file_name = _PROJECT_FILE)
+
+		self.assertTrue(self._plugin._is_project_file(view))
+
+	def testIsProjectFileFalse(self) -> None:
+		"""
+		Обычный файл не распознаётся как файл проекта.
+		"""
+
+		view = _FakeView(file_name = "/page.htm")
+
+		self.assertFalse(self._plugin._is_project_file(view))
+
+	def testIsProjectFileNoName(self) -> None:
+		"""
+		Представление без имени файла не считается файлом проекта.
+		"""
+
+		view = _FakeView(file_name = None)
+
+		self.assertFalse(self._plugin._is_project_file(view))
+
+	# reapply
+
+	def testReapplyClearsCacheAndApplies(self) -> None:
+		"""
+		`reapply` сбрасывает кэш проекта (заставляя перечитать
+		данные) и применяет синтаксис к представлению.
+		"""
+
+		self._config_parser._fake_map = {"html": _HTML_SYNTAX_PATH}
+
+		window = _FakeWindow(project_file = _PROJECT_FILE, project_data = _PROJECT_DATA)
+		view = _FakeView(file_name = "/page.htm", window = window, view_id = 1)
+
+		# Первый вызов — кэш пуст, данные читаются из «окна».
+		self._plugin._get_project_data(view)
+		self.assertEqual(window.project_data_calls, 1)
+
+		# Повторный вызов в пределах TTL — используется кэш, перечитывания нет.
+		self._plugin._get_project_data(view)
+		self.assertEqual(window.project_data_calls, 1)
+
+		# `reapply` сбрасывает кэш и применяет синтаксис; данные перечитываются.
+		self._plugin.reapply(view)
+
+		self.assertEqual(window.project_data_calls, 2)
+		self.assertEqual(self._syntax_applier.calls, [_HTML_SYNTAX_PATH])
+
 	# события
 
 	def testOnActivatedDebounce(self) -> None:
@@ -419,6 +480,32 @@ class TestAutoSyntaxByProject(unittest.TestCase):
 		self._plugin.on_post_save(view)
 
 		self.assertEqual(self._syntax_applier.calls, [_HTML_SYNTAX_PATH])
+
+	def testOnPostSaveProjectFileReappliesAllViews(self) -> None:
+		"""
+		Сохранение `.sublime-project` повторно применяет синтаксис ко всем
+		подходящим вкладкам окна (карта синтаксисов могла измениться).
+		"""
+
+		self._config_parser._fake_map = {"html": _HTML_SYNTAX_PATH}
+
+		view1 = _FakeView(file_name = "/a.htm", view_id = 1)
+		view2 = _FakeView(file_name = "/b.htm", view_id = 2)
+
+		window = _FakeWindow(
+			project_file = _PROJECT_FILE,
+			project_data = _PROJECT_DATA,
+			views = [view1, view2]
+		)
+
+		view1._window = window
+		view2._window = window
+
+		project_view = _FakeView(file_name = _PROJECT_FILE, window = window, view_id = 3)
+
+		self._plugin.on_post_save(project_view)
+
+		self.assertEqual(self._syntax_applier.calls, [_HTML_SYNTAX_PATH, _HTML_SYNTAX_PATH])
 
 if __name__ == "__main__":
 	unittest.main()

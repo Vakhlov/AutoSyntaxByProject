@@ -13,7 +13,7 @@ from AutoSyntaxByProject.SyntaxPathNormalizer import SyntaxPathNormalizer
 
 class TestSyntaxPathNormalizer(unittest.TestCase):
 	"""
-	Тесты для SyntaxPathNormalizer.
+	Тесты SyntaxPathNormalizer.
 	"""
 
 	def setUp(self) -> None:

@@ -4,7 +4,7 @@ import sublime_plugin
 import time
 from typing import Dict, Optional, Tuple
 
-from .constants import ACTIVATED_DEBOUNCE, CACHE_TTL, EXTENSION_ALIASES, SUPPORTED_EXTENSIONS
+from .constants import get_setting
 from .logger import logger
 from .SyntaxApplier import SyntaxApplier
 from .SyntaxConfigParser import SyntaxConfigParser
@@ -16,6 +16,9 @@ class AutoSyntaxByProject(sublime_plugin.EventListener):
 	Только подписывается на события и координирует работу других классов.
 	"""
 
+	# Текущий экземпляр класса для доступа из команд.
+	_instance: Optional["AutoSyntaxByProject"] = None
+
 	def __init__(self) -> None:
 		# Создаем экземпляры вспомогательных классов.
 		self._path_normalizer = SyntaxPathNormalizer()
@@ -24,13 +27,24 @@ class AutoSyntaxByProject(sublime_plugin.EventListener):
 
 		# Кэш данных проекта.
 		self._project_cache: Dict[str, Tuple[Optional[Dict], float]] = {}
-		self._cache_ttl = CACHE_TTL
+		self._cache_ttl = get_setting("cache_ttl")
 
 		# Ограничение частоты вызовов `on_activated`.
-		self._activated_debounce = ACTIVATED_DEBOUNCE
+		self._activated_debounce = get_setting("activated_debounce")
 		self._last_activated: Dict[int, float] = {}
 
+		# Запоминаем экземпляр для доступа из команд.
+		AutoSyntaxByProject._instance = self
+
 		logger.info("плагин загружен")
+
+	@classmethod
+	def instance(cls) -> Optional["AutoSyntaxByProject"]:
+		"""
+		Возвращает текущий экземпляр обработчика событий или None.
+		Используется командами (например, `auto_syntax_reapply`).
+		"""
+		return cls._instance
 
 	# --- Методы-обработчики событий Sublime Text ---
 
@@ -47,17 +61,20 @@ class AutoSyntaxByProject(sublime_plugin.EventListener):
 		# 2. Узнаём, когда функция вызывалась последний раз.
 		last_time = self._last_activated.get(view_id, 0)
 
-		# 3. Если вызывается чаще, чем раз в 0.5 секунды — игнорируем.
+		# 3. Перечитываем задержку из настроек.
+		self._activated_debounce = get_setting("activated_debounce")
+
+		# 4. Если вызывается чаще, чем раз в 0.5 секунды — игнорируем.
 		current_time = time.time()
 
 		if current_time - last_time < self._activated_debounce:
 			logger.debug(f"слишком частый вызов 'on_activate' для {view_id}, пропускаем")
 			return
 
-		# 4. Иначе запоминаем время вызова.
+		# 5. Иначе запоминаем время вызова.
 		self._last_activated[view_id] = current_time
 		
-		# 5. И применяем синтаксис.
+		# 6. И применяем синтаксис.
 		self._apply_syntax_if_needed(view)
 
 	def on_load(self, view: sublime.View) -> None:
@@ -71,8 +88,15 @@ class AutoSyntaxByProject(sublime_plugin.EventListener):
 	def on_post_save(self, view: sublime.View) -> None:
 		"""
 		Срабатывает после сохранения файла.
+		Если сохранён файл проекта — повторно применяет синтаксис ко всем
+		подходящим вкладкам окна (карта синтаксисов могла измениться).
 		"""
 		logger.debug("вызван `on_post_save`")
+
+		if self._is_project_file(view):
+			self._reapply_window(view)
+
+			return
 
 		self._apply_syntax_if_needed(view)
 
@@ -166,6 +190,8 @@ class AutoSyntaxByProject(sublime_plugin.EventListener):
 			cached_data, timestamp = self._project_cache[cache_key]
 
 			# 5. Если данные есть и не устарели — возвращаем.
+			self._cache_ttl = get_setting("cache_ttl")
+
 			if time.time() - timestamp < self._cache_ttl:
 				logger.debug("возвращаем данные проекта из кеша")
 				return cached_data
@@ -202,7 +228,16 @@ class AutoSyntaxByProject(sublime_plugin.EventListener):
 		ext_without_dot = extension[1:]
 
 		# 2. Возвращаем либо псевдоним, либо само расширение без точки, если псевдонима нет.
-		return EXTENSION_ALIASES.get(ext_without_dot, ext_without_dot)
+		return get_setting("extension_aliases").get(ext_without_dot, ext_without_dot)
+
+	def _is_project_file(self, view: sublime.View) -> bool:
+		"""
+		Проверяет, является ли представление (view) файлом `.sublime-project`.
+		"""
+
+		file_path = view.file_name()
+
+		return bool(file_path and file_path.endswith(".sublime-project"))
 
 	def _is_supported_extension(self, extension: str) -> bool:
 		"""
@@ -210,4 +245,35 @@ class AutoSyntaxByProject(sublime_plugin.EventListener):
 		"""
 		logger.debug("вызван _is_supported_extension")
 
-		return extension in SUPPORTED_EXTENSIONS
+		return extension in get_setting("supported_extensions")
+
+	def _reapply_window(self, view: sublime.View) -> None:
+		"""
+		Сбрасывает кэш проекта и повторно применяет синтаксис ко всем
+		представлениям окна, которому принадлежит `view`.
+		"""
+
+		window = view.window()
+
+		if not window:
+			return
+
+		self._project_cache.clear()
+
+		for current_view in window.views():
+			self._apply_syntax_if_needed(current_view)
+
+	def reapply(self, view: sublime.View) -> None:
+		"""
+		Сбрасывает кэш проекта и заново применяет синтаксис к `view`.
+		Используется командой принудительного применения после ручного
+		изменения карты синтаксисов в файле проекта.
+
+		Args:
+			view: Представление, к которому применяется синтаксис.
+		"""
+
+		logger.debug("вызван `reapply`")
+
+		self._project_cache.clear()
+		self._apply_syntax_if_needed(view)

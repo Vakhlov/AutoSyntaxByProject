@@ -80,7 +80,7 @@ class _SpyView(_ViewBase):
 
 class TestSyntaxApplier(unittest.TestCase):
 	"""
-	Тесты для SyntaxApplier.
+	Тесты SyntaxApplier.
 	"""
 
 	# apply_syntax
