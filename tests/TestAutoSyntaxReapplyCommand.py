@@ -13,7 +13,7 @@ import unittest
 
 import sublime # Заглушка (см. _bootstrap) — нужна для констрирования `Edit`.
 
-from _fakes import _FakeConfigParser, _FakeSyntaxApplier, _FakeView, _FakeWindow
+from _fakes import _FakeView, _FakeWindow, make_plugin_with_fakes
 from _fixtures import _HTML_SYNTAX_PATH, _PROJECT_DATA, _PROJECT_FILE
 from _log_helpers import muted_logger
 from AutoSyntaxByProject.main import AutoSyntaxByProject
@@ -33,11 +33,7 @@ class TestAutoSyntaxReapplyCommand(unittest.TestCase):
 		self._logger = self._stack.enter_context(muted_logger())
 		
 		# Плагин с подмененными зависимостями.
-		self._plugin = AutoSyntaxByProject()
-		self._config_parser = _FakeConfigParser()
-		self._syntax_applier = _FakeSyntaxApplier()
-		self._plugin._config_parser = self._config_parser
-		self._plugin._syntax_applier = self._syntax_applier
+		self._plugin, self._config_parser, self._syntax_applier = make_plugin_with_fakes()
 
 	# run
 

@@ -8,8 +8,9 @@
 
 from __future__ import annotations
 
-from typing import Dict, List, Optional, TYPE_CHECKING
+from typing import Dict, List, NamedTuple, Optional, TYPE_CHECKING
 
+from AutoSyntaxByProject.main import AutoSyntaxByProject
 from AutoSyntaxByProject.SyntaxApplier import SyntaxApplier
 from AutoSyntaxByProject.SyntaxConfigParser import SyntaxConfigParser
 from AutoSyntaxByProject.SyntaxPathNormalizer import SyntaxPathNormalizer
@@ -118,3 +119,31 @@ class _FakeWindow(_WindowBase):
 
 	def views(self) -> List[sublime.View]:
 		return self._views
+
+class _PluginWithFakes(NamedTuple):
+	"""
+	Связка «плагин + подменённые зависимости» для тестов.
+	"""
+	plugin: AutoSyntaxByProject
+	config_parser: _FakeConfigParser
+	syntax_applier: _FakeSyntaxApplier
+
+def make_plugin_with_fakes() -> _PluginWithFakes:
+	"""
+	Создаёт плагин `AutoSyntaxByProject` с подменёнными зависимостями
+	(`_FakeConfigParser`, `_FakeSyntaxApplier`) и возвращает их связкой.
+
+	Каждому тесту нужен свежий плагин с подсунутыми фейками — этот код
+	повторялся в `setUp` нескольких тестовых модулей.
+
+	Returns:
+		Связка из плагина и его фейковых зависимостей.
+	"""
+	config_parser = _FakeConfigParser()
+	syntax_applier = _FakeSyntaxApplier()
+
+	plugin = AutoSyntaxByProject()
+	plugin._config_parser = config_parser
+	plugin._syntax_applier = syntax_applier
+
+	return _PluginWithFakes(plugin, config_parser, syntax_applier)

@@ -68,7 +68,7 @@ class AutoSyntaxByProject(sublime_plugin.EventListener):
 		current_time = time.time()
 
 		if current_time - last_time < self._activated_debounce:
-			logger.debug(f"слишком частый вызов 'on_activate' для {view_id}, пропускаем")
+			logger.debug(f"слишком частый вызов 'on_activated' для {view_id}, пропускаем")
 			return
 
 		# 5. Иначе запоминаем время вызова.
@@ -113,7 +113,7 @@ class AutoSyntaxByProject(sublime_plugin.EventListener):
 		file_path = view.file_name()
 
 		if not file_path:
-			logger.debug("у файла нет имени (создан новый и ещё не сохранен), пропускаем")
+			logger.debug("у файла нет имени (создан новый и ещё не сохранён), пропускаем")
 			return
 
 		# 2. Проверяем расширение файла.
@@ -193,7 +193,7 @@ class AutoSyntaxByProject(sublime_plugin.EventListener):
 			self._cache_ttl = get_setting("cache_ttl")
 
 			if time.time() - timestamp < self._cache_ttl:
-				logger.debug("возвращаем данные проекта из кеша")
+				logger.debug("возвращаем данные проекта из кэша")
 				return cached_data
 
 		# 6. Иначе загружаем свежие данные.

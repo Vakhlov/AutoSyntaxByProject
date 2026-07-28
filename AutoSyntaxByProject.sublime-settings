@@ -7,7 +7,7 @@
 	"cache_ttl": 5,
 
 	// Режим отладки (если true — в консоль Sublime Text выводятся логи).
-	"debug": true,
+	"debug": false,
 
 	// Псевдонимы поддерживаемых расширений файлов.
 	"extension_aliases": {

@@ -13,7 +13,7 @@ class SyntaxConfigParser:
 	2. project_syntaxes: [{'rules': [{'file_name': '*.html'}], 'syntax': '...'}]
 	"""
 
-	# Регулярное выражения для проверки расширения файла.
+	# Регулярное выражение для проверки расширения файла.
 	EXTENSION_PATTERN = re.compile(r'\*\.([a-zA-Z0-9]+)')
 
 	def parse_syntax_map(self, project_data: Optional[Dict]) -> Optional[SyntaxMap]:
@@ -96,7 +96,7 @@ class SyntaxConfigParser:
 		"""
 		logger.debug("парсим формат 'project_syntaxes'")
 
-		# 1. Создаем пустой словарь для результата.
+		# 1. Создаём пустой словарь для результата.
 		result = {}
 
 		# 2. Проходим по всем правилам.

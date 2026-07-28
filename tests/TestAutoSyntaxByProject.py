@@ -13,7 +13,7 @@ import unittest
 
 from typing import Any
 
-from _fakes import _FakeClock, _FakeConfigParser, _FakeSyntaxApplier, _FakeView, _FakeWindow
+from _fakes import _FakeClock, _FakeView, _FakeWindow, make_plugin_with_fakes
 from _fixtures import _HTML_SYNTAX_PATH, _MD_SYNTAX_PATH, _PROJECT_DATA, _PROJECT_FILE
 from _log_helpers import muted_logger
 from AutoSyntaxByProject import main as main_module
@@ -40,11 +40,7 @@ class TestAutoSyntaxByProject(unittest.TestCase):
 		self._main.time = self._clock
 
 		# Плагин с подмененными зависимостями.
-		self._plugin = AutoSyntaxByProject()
-		self._config_parser = _FakeConfigParser()
-		self._syntax_applier = _FakeSyntaxApplier()
-		self._plugin._config_parser = self._config_parser
-		self._plugin._syntax_applier = self._syntax_applier
+		self._plugin, self._config_parser, self._syntax_applier = make_plugin_with_fakes()
 
 	# def tearDown(self) -> None:
 		# self._main.time = self._original_time
@@ -85,7 +81,7 @@ class TestAutoSyntaxByProject(unittest.TestCase):
 	def testGetExtensionKeyNoAlias(self) -> None:
 		"""
 		Возвращает само расширение без точки в качестве ключа,
-		если для этого расширения не настроен песевдоним.
+		если для этого расширения не настроен псевдоним.
 		"""
 
 		self.assertEqual(self._plugin._get_extension_key(".extension"), "extension")

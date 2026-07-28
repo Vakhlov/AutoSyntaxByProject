@@ -12,7 +12,7 @@ import unittest
 from AutoSyntaxByProject import logger as logger_module
 from AutoSyntaxByProject.logger import setup_logger
 
-class TextSetupLogger(unittest.TestCase):
+class TestSetupLogger(unittest.TestCase):
 	"""
 	Тесты `setup_logger`.
 
@@ -46,7 +46,7 @@ class TextSetupLogger(unittest.TestCase):
 
 	def testAddsSingleStreamHandler(self) -> None:
 		"""
-		При первом вызове добаляется ровно один StreamHandler.
+		При первом вызове добавляется ровно один StreamHandler.
 		"""
 
 		log = setup_logger(self._logger_name)

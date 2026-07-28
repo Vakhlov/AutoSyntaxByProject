@@ -15,7 +15,7 @@ from _log_helpers import muted_logger
 
 _LOGGER_NAME = "muted.logger"
 
-class TestLoggerHelpers(unittest.TestCase):
+class TestLogHelpers(unittest.TestCase):
 	"""
 	Тесты контекстного менеджера приглушённого логгера?
 	"""

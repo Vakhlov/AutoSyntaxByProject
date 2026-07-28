@@ -44,7 +44,7 @@ class _StubNormalizer(_NormalizerBase):
 class _StubSettings(_SettingsBase):
 	"""
 	Мок `view.settings()`: по ключу `'syntax'` возвращает преднастроенный
-	текущий синтаксис, для отсальных ключей — `default`.
+	текущий синтаксис, для остальных ключей — `default`.
 	"""
 
 	def __init__(self, current_syntax: Optional[str] = None) -> None:

@@ -4,13 +4,13 @@ from .constants import DEBUG
 
 def setup_logger(name: str = "AutoSyntaxByProject") -> logging.Logger:
 	"""
-	Создает и возвращает изолированный логгер.
+	Создаёт и возвращает изолированный логгер.
 
 	Args:
 		name: Имя логгера
 
 	Returns:
-		Изолированный логгер с префиксом 'AutoSyntaxForProject:'
+		Изолированный логгер с префиксом 'AutoSyntaxByProject:'
 	"""
 
 	# 1. Создаём логгер с указанным именем.

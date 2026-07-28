@@ -59,7 +59,7 @@ class TestSyntaxConfigParser(unittest.TestCase):
 
 	def testParseSettingsMapNeitherFormat(self) -> None:
 		"""
-		В данных проекта настройка 'settings' не содержит раздлелов'extensions' или
+		В данных проекта настройка 'settings' не содержит разделов'extensions' или
 		'project_syntaxes', функция возвращает None.
 		"""
 
