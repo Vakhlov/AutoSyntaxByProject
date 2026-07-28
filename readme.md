@@ -113,16 +113,12 @@
 
 ## Совместимость
 
-• **Sublime Text:** версия 4 (Build 4100+),
-• **Python:** 3.8+ (поставляется в Sublime Text),
-• **Зависимость:** пакет [Liquid](https://packagecontrol.io/packages/Liquid) (устанавливается отдельно).
+- **Sublime Text:** версия 4 (Build 4100+),
+- **Python:** 3.8+ (поставляется в Sublime Text),
+- **Зависимость:** пакет [Liquid](https://packagecontrol.io/packages/Liquid) (устанавливается отдельно).
 
 ---
 
 ## Лицензия
 
 Лицензия MIT. См. файл [license](license)
-
----
-
-## Благодарности
