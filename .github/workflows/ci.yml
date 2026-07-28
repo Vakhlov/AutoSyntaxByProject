@@ -35,7 +35,7 @@ jobs:
         run: python scripts/coverage_badge.py coverage.json badges/coverage.svg
 
       - name: Коммит бейджа (только на push, одна версия Python)
-        if: github.event_name == "push" && matrix.python-version == "3.8"
+        if: github.event_name == 'push' && matrix.python-version == '3.8'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
