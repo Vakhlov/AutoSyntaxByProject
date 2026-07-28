@@ -49,7 +49,7 @@ class SyntaxApplier:
 
 		# 4. Если синтаксис уже установлен — выходим.
 		if current_normalized == target_normalized:
-			logger.debug("синтаксис уже установлен, пропускам")
+			logger.debug("синтаксис уже установлен, пропускаем")
 			return False
 
 		# 5. Пытаемся установить новый синтаксис.

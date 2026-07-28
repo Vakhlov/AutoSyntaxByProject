@@ -8,13 +8,14 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import _bootstrap
 
-import logging
+import contextlib
 import unittest
 
 from typing import Any
 
 from _fakes import _FakeClock, _FakeConfigParser, _FakeSyntaxApplier, _FakeView, _FakeWindow
 from _fixtures import _HTML_SYNTAX_PATH, _MD_SYNTAX_PATH, _PROJECT_DATA, _PROJECT_FILE
+from _log_helpers import muted_logger
 from AutoSyntaxByProject import main as main_module
 from AutoSyntaxByProject.main import AutoSyntaxByProject
 
@@ -24,15 +25,18 @@ class TestAutoSyntaxByProject(unittest.TestCase):
 	"""
 
 	def setUp(self) -> None:
+		# Стек временных ресурсов: единая точка отката после теста.
+		self._stack = contextlib.ExitStack()
+		self.addCleanup(self._stack.close)
+
 		# Приглушаем логгер плагина, чтобы не забивать вывод при создании экземпляра.
-		self._logger = logging.getLogger("AutoSyntaxByProject.logger")
-		self._original_level = self._logger.level
-		self._logger.setLevel(logging.CRITICAL)
+		self._logger = self._stack.enter_context(muted_logger())
 
 		# Управляемые часы.
 		self._clock = _FakeClock()
 		self._main: Any = main_module
-		self._original_time = self._main.time
+		# self._original_time = self._main.time
+		self._stack.callback(setattr, self._main, "time", self._main.time)
 		self._main.time = self._clock
 
 		# Плагин с подмененными зависимостями.
@@ -42,9 +46,8 @@ class TestAutoSyntaxByProject(unittest.TestCase):
 		self._plugin._config_parser = self._config_parser
 		self._plugin._syntax_applier = self._syntax_applier
 
-	def tearDown(self) -> None:
-		self._main.time = self._original_time
-		self._logger.setLevel(self._original_level)
+	# def tearDown(self) -> None:
+		# self._main.time = self._original_time
 
 	# _is_supported_extension
 
