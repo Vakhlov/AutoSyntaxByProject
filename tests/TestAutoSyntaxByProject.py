@@ -35,15 +35,11 @@ class TestAutoSyntaxByProject(unittest.TestCase):
 		# Управляемые часы.
 		self._clock = _FakeClock()
 		self._main: Any = main_module
-		# self._original_time = self._main.time
 		self._stack.callback(setattr, self._main, "time", self._main.time)
 		self._main.time = self._clock
 
 		# Плагин с подмененными зависимостями.
 		self._plugin, self._config_parser, self._syntax_applier = make_plugin_with_fakes()
-
-	# def tearDown(self) -> None:
-		# self._main.time = self._original_time
 
 	# _is_supported_extension
 
@@ -148,6 +144,47 @@ class TestAutoSyntaxByProject(unittest.TestCase):
 		self.assertIsNone(self._plugin._get_project_data(view))
 
 	# _apply_syntax_if_needed
+
+	def testApplySyntaxIfNeededApplierFails(self) -> None:
+		"""
+		Логирует неудачу, если SyntaxApplier не смог применить синтаксис.
+		"""
+
+		self._config_parser._fake_map = {"html": _HTML_SYNTAX_PATH}
+		self._syntax_applier._return_value = False
+
+		window = _FakeWindow(project_file = _PROJECT_FILE, project_data = _PROJECT_DATA)
+		view = _FakeView(file_name = "/page.html", window = window, view_id = 1)
+
+		self._plugin._apply_syntax_if_needed(view)
+
+		self.assertEqual(self._syntax_applier.calls, [_HTML_SYNTAX_PATH])
+
+	def testApplySyntaxIfNeededEmptyExtensionKey(self) -> None:
+		"""
+		Не применяет синтаксис при неверной настройке (когда расширению не задан
+		псевдоним, например, так: {".htm": ""}).
+		"""
+
+		self._config_parser._fake_map = {"html": _HTML_SYNTAX_PATH}
+
+		original_get_setting = self._main.get_setting
+
+		def patched_get_setting(key: str) -> Any:
+			if key == "extension_aliases":
+				return {"html": ""}
+
+			return original_get_setting(key)
+
+		self._stack.callback(setattr, self._main, "get_setting", original_get_setting)
+		self._main.get_setting = patched_get_setting
+
+		window = _FakeWindow(project_file = _PROJECT_FILE, project_data = _PROJECT_DATA)
+		view = _FakeView(file_name = "/page.html", window = window, view_id = 1)
+
+		self._plugin._apply_syntax_if_needed(view)
+
+		self.assertEqual(self._syntax_applier.calls, [])
 
 	def testApplySyntaxIfNeededNoFileName(self) -> None:
 		"""
@@ -289,6 +326,26 @@ class TestAutoSyntaxByProject(unittest.TestCase):
 		view = _FakeView(file_name = None)
 
 		self.assertFalse(self._plugin._is_project_file(view))
+
+	# _reapply_window
+
+	def testReapplyWindowNoWindow(self) -> None:
+		"""
+		_reapply_window завершается без ошибки и без сброса кэша, если у
+		представления нет окна (view.window() > None).
+		"""
+
+		view = _FakeView(file_name = "/page.html", window = None)
+
+		# Заполняем кэш для последующей проверки: в _reapply_window
+		# очистка кэша происходит после проверки наличия window и
+		# если кэш остался, значит, проверка сработала.
+		self._plugin._project_cache["stale"] = ({"settings": {}}, 0.0)
+
+		self._plugin._reapply_window(view)
+
+		self.assertEqual(self._syntax_applier.calls, [])
+		self.assertIn("stale", self._plugin._project_cache)
 
 	# reapply
 

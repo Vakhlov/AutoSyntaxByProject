@@ -141,7 +141,7 @@ class AutoSyntaxByProject(sublime_plugin.EventListener):
 		extension_key = self._get_extension_key(extension)
 
 		if not extension_key:
-			logger.debug(f"не удалось определить ключ для расширения {extension}")
+			logger.warning(f"пустой ключ для расширения {extension}; проверьте extension_aliases в настройках")
 			return
 
 		if extension_key not in syntax_map:

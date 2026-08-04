@@ -220,6 +220,21 @@ class TestSyntaxConfigParser(unittest.TestCase):
 
 		self.assertEqual(result, expected)
 
+	def testParseProjectSyntaxesSkipsNonMatchingPatterns(self) -> None:
+		"""
+		Элемент rules со свойством file_name, значение
+		которого не содержит расширения файла, пропускается.
+		"""
+
+		project_syntaxes = [{
+			"rules": [{"file_name": "README"}],
+			"syntax": _HTML_SYNTAX_PATH
+		}]
+
+		result = self.parser._parse_project_syntaxes_format(project_syntaxes)
+
+		self.assertEqual(result, {})
+
 	def testParseProjectSyntaxesBreaksAfterFirstMatch(self) -> None:
 		"""
 		Внутри одного правила берётся только первое совпавшее расширение.
